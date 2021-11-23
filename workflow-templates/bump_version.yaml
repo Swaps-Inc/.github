@@ -1,0 +1,36 @@
+name: Bump Version & Publish Package
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: "0"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+          registry-url: "https://npm.pkg.github.com/"
+
+      #      https://github.com/marketplace/actions/automated-version-bump
+      - name: "Automated Version Bump"
+        uses: "phips28/gh-action-bump-version@v9.0.1"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag-prefix: "v"
+          commit-message: "CI: Version bump to {{version}}"
+          minor-wording: "#MINOR_VERSION"
+          major-wording: "#MAJOR_VERSION"
+          patch-wording: "#PATCH_VERSION"
+
+      # Skip post-install scripts here, as a malicious
+      # script could steal NODE_AUTH_TOKEN.
+      - run: npm install --ignore-scripts
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
