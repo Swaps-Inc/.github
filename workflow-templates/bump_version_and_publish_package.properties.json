@@ -1,0 +1,11 @@
+{
+  "name": "Bump Version & Publish Package",
+  "description": "",
+  "iconName": "",
+  "categories": [
+    "TypeScript"
+  ],
+  "filePatterns": [
+    "package.json"
+  ]
+}
